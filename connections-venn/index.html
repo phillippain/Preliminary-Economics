@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Year 11 Economics: connect the dots (student version)</title>
+<style>
+.ev{--ink:#163A4A;--copper:#C9752B;--muted:#4a5b64;--line:#d6dde1;--bg:#fff;--good:#2e7d4f;--bad:#b3402a;
+  font-family:"Helvetica Neue",Arial,"Liberation Sans",sans-serif;color:var(--ink);background:var(--bg);
+  max-width:1100px;margin:0 auto;padding:16px;box-sizing:border-box}
+.ev *{box-sizing:border-box}
+.ev h1{font-size:24px;line-height:1.2;margin:0 0 2px}
+.ev .sub{font-size:14px;color:var(--muted);margin:0 0 12px}
+.ev .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:0 0 10px}
+.ev .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px}
+.ev .legend span{display:inline-flex;align-items:center;gap:5px}
+.ev .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.ev .prog{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.ev .bar{width:110px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.ev .bar i{display:block;height:100%;background:var(--copper);width:0;transition:width .3s}
+.ev .grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);grid-template-areas:"v p" "r p";gap:12px 22px;align-items:start}
+.ev .gv{grid-area:v}.ev .gp{grid-area:p}.ev .rows{grid-area:r}
+@media (max-width:820px){.ev .grid{grid-template-columns:1fr;grid-template-areas:"v" "p" "r"}.ev .panel{min-height:0}}
+.ev svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.ev .area{cursor:pointer;outline:none}
+.ev .area circle.fill{transition:fill-opacity .2s,stroke-width .2s,opacity .2s}
+.ev .area text{pointer-events:none;font-weight:700;font-size:11.5px;transition:opacity .2s}
+.ev .area:focus-visible circle.fill{stroke-width:5}
+.ev .dim circle.fill{fill-opacity:.04!important;opacity:.55}
+.ev .dim text{opacity:.35}
+.ev .on circle.fill{fill-opacity:.34!important;stroke-width:4.5}
+.ev .hov circle.fill{fill-opacity:.26}
+.ev .badge{cursor:pointer;outline:none}
+.ev .badge circle{fill:var(--ink);stroke:#fff;stroke-width:2;transition:fill .2s}
+.ev .badge text{fill:#fff;font-weight:700;font-size:11px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ev .badge:hover circle,.ev .badge:focus-visible circle,.ev .badge.on circle{fill:var(--copper)}
+.ev .badge.seen circle{stroke:#f2c48f}
+.ev .badge.seen::after{content:""}
+.ev .tick{fill:#2e7d4f;stroke:#fff;stroke-width:1.5;display:none}
+.ev .badge.seen .tick{display:block}
+.ev .hub{cursor:pointer;outline:none}
+.ev .hub circle{fill:#fff;stroke:var(--copper);stroke-width:2.5;transition:fill .2s}
+.ev .hub.on circle,.ev .hub:hover circle,.ev .hub:focus-visible circle{fill:#fbeedf}
+.ev .hub text{pointer-events:none;text-anchor:middle;font-weight:700;fill:var(--copper)}
+.ev .link{fill:none;stroke:var(--copper);stroke-width:3.5;stroke-dasharray:7 6;opacity:0;transition:opacity .2s;pointer-events:none}
+.ev .link.on{opacity:1}
+.ev .panel{border:1px solid var(--line);border-radius:10px;padding:16px 18px 18px;min-height:420px;background:#fff}
+.ev .panel h2{font-size:19px;margin:0 0 4px;line-height:1.25}
+.ev .panel .meta{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+.ev .panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--copper);margin:16px 0 5px}
+.ev .panel p{font-size:15px;line-height:1.5;margin:0 0 8px}
+.ev .panel ul{margin:0 0 6px;padding-left:18px;font-size:15px;line-height:1.45}
+.ev .panel li{margin:0 0 3px}
+.ev dl{margin:0;font-size:14.5px;line-height:1.45}
+.ev dt{font-weight:700;margin-top:6px}
+.ev dd{margin:0 0 0 0}
+.ev .exbox{background:#fbf3ea;border-left:4px solid var(--copper);border-radius:6px;padding:10px 12px;font-size:14.5px;line-height:1.45}
+.ev .exbox b{display:block;margin-bottom:2px}
+.ev ol.chain{list-style:none;margin:0;padding:0;counter-reset:s}
+.ev ol.chain li{counter-increment:s;position:relative;padding:7px 10px 7px 38px;margin:0 0 14px;background:#eef3f5;border-radius:8px;font-size:14.5px;line-height:1.4}
+.ev ol.chain li::before{content:counter(s);position:absolute;left:9px;top:7px;width:21px;height:21px;border-radius:50%;background:var(--ink);color:#fff;font-weight:700;font-size:12px;text-align:center;line-height:21px}
+.ev ol.chain li:not(:last-child)::after{content:"↓";position:absolute;left:14px;bottom:-17px;color:var(--copper);font-weight:700;font-size:15px}
+.ev .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+.ev button.tag{font:inherit;font-size:12.5px;line-height:1.2;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:6px 11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-align:left}
+.ev button.tag:hover,.ev button.tag:focus-visible{background:var(--ink);color:#fff;outline:none}
+.ev button.tag.on{background:var(--copper);border-color:var(--copper);color:#fff}
+.ev button.tag.seen{border-color:var(--good)}
+.ev .dots{display:inline-flex}
+.ev .dots i{width:9px;height:9px;border-radius:50%;display:block;border:1px solid #fff}
+.ev .dots i+i{margin-left:-3px}
+.ev button.btn{font:inherit;font-size:14px;font-weight:700;color:#fff;background:var(--ink);border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+.ev button.btn:hover,.ev button.btn:focus-visible{background:var(--copper);outline:none}
+.ev button.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+.ev button.btn.ghost:hover{background:var(--ink);color:#fff}
+.ev .q{background:#eef3f5;border-radius:8px;padding:10px 12px;font-size:15px;line-height:1.45;margin:0 0 8px}
+.ev .ans{display:none;border-left:4px solid var(--good);background:#eaf4ee;border-radius:6px;padding:10px 12px;font-size:14.5px;line-height:1.45;margin-top:8px}
+.ev .ans.show{display:block}
+.ev .reset{font:inherit;font-size:13px;border:0;background:none;color:var(--copper);text-decoration:underline;cursor:pointer;padding:0;margin-top:12px}
+.ev .rows h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--copper);margin:0 0 6px}
+.ev .res{font-weight:700;font-size:16px;margin:4px 0 6px}
+.ev .res.good{color:var(--good)}.ev .res.bad{color:var(--bad)}
+.ev .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.4}
+@media (prefers-reduced-motion:reduce){.ev *{transition:none!important}}
+</style></head>
+<body>
+<div class="ev" id="ev">
+  <h1>Year 11 Economics: connect the dots</h1>
+  <p class="sub">The six focus areas are not separate topics. Explore how they connect, then test yourself.</p>
+  <div class="top">
+    <div class="legend" id="ev-legend"></div>
+    <div class="prog"><span id="ev-progtxt"></span><span class="bar"><i id="ev-bar"></i></span></div>
+  </div>
+  <div class="grid">
+    <div class="gv"><svg id="ev-svg" viewBox="0 0 520 480" role="group" aria-label="Venn diagram of the six Year 11 Economics focus areas"></svg></div>
+    <div class="panel gp" id="ev-panel" aria-live="polite"></div>
+    <div class="rows">
+      <h3>More connections (these areas can’t touch in the diagram)</h3>
+      <div class="tags" id="ev-long"></div>
+    </div>
+  </div>
+  <p class="note">Based on the Economics 11–12 Syllabus (2025), Year 11 content. Examples are simplified to help you see the idea. Always check current figures and your class notes.</p>
+</div>
+
+<script>
+(function(){
+const COL={intro:'#163A4A',govt:'#7A3E6D',markets:'#1F8A8A',hb:'#4C8C4A',fin:'#C9752B',intl:'#2F6DB5'};
+const NAME={intro:'Introduction to economics',govt:'Government sector',markets:'Markets',hb:'Household and business sector',fin:'Financial sector',intl:'International sector'};
+const SHORT={intro:'Introduction',govt:'Government',markets:'Markets',hb:'Household & business',fin:'Financial',intl:'International'};
+const LINES={intro:['Introduction','to economics'],govt:['Government','sector'],markets:['Markets'],hb:['Household and','business sector'],fin:['Financial','sector'],intl:['International','sector']};
+const ORDER=['intro','govt','markets','hb','fin','intl'];
+const ANG={intro:-90,govt:-30,markets:30,hb:90,fin:150,intl:210};
+
+const AREA={
+ intro:{plain:'The toolkit for the whole course. Economics is about making choices when resources are limited, and every other area uses these ideas.',
+  terms:[['Scarcity','Wants are unlimited but resources are limited, so choices must be made.'],['Opportunity cost','The next best alternative you give up when you choose something.'],['Incentive','Something that motivates a person or business to act.'],['PPF','A curve showing the most of two goods an economy can produce with its resources.'],['Behavioural economics','The study of how real people sometimes depart from perfectly rational choices.']],
+  life:'Deciding whether to work an extra shift or study for a test: whatever you give up is your opportunity cost.'},
+ markets:{plain:'How buyers and sellers come together to set prices and quantities, and what happens when that process goes wrong.',
+  terms:[['Equilibrium','The price and quantity where the amount buyers want equals the amount sellers offer.'],['Elasticity (PED, PES)','How strongly quantity demanded or supplied responds to a price change.'],['Externality','A cost or benefit that falls on someone who is not part of the transaction.'],['Public good','A good that is non-excludable and non-rivalrous, so the market under-provides it.']],
+  life:'Why concert ticket prices jump when a popular act announces a tour.'},
+ hb:{plain:'The decisions of households (spend, save, supply labour) and businesses (produce, hire, aim for profit).',
+  terms:[['Utility','The satisfaction a person gets from consuming something.'],['MPC / MPS','The share of each extra dollar of income that is spent (MPC) or saved (MPS).'],['Productivity','Output produced per unit of input, such as per worker-hour.'],['Long-run average cost (LRAC)','The lowest cost per unit a business can reach when it can change all its inputs.']],
+  life:'What you do with your first pay packet: how much you spend (MPC) and how much you save (MPS).'},
+ fin:{plain:'How savings find their way to the people and businesses who want to borrow and invest.',
+  terms:[['Financial intermediary','An organisation, such as a bank or super fund, that links savers with borrowers.'],['Equity','Part-ownership of a business, bought as shares.'],['Debt','Money borrowed that must be repaid with interest, such as a loan or bond.'],['Loanable funds','The market where the supply of savings meets the demand for borrowing; interest is the price.']],
+  life:'Your bank account and your future super: both feed the pool of funds others borrow from.'},
+ govt:{plain:'How government raises money through taxes, spends it through the Budget, and decides when to step into markets.',
+  terms:[['Tax–transfer system','Taxes collected from households and businesses, and payments made back to households.'],['Recurrent spending','Ongoing day-to-day spending, such as wages and services.'],['Non-recurrent spending','One-off or capital spending, such as building a hospital.'],['Privatisation / nationalisation','Moving a business into private ownership, or into government ownership.']],
+  life:'The Budget decides how much goes to health, education and roads, and who pays tax to fund it.'},
+ intl:{plain:'Australia’s dealings with the rest of the world: what we trade, who with, and how money moves across borders.',
+  terms:[['Exports / imports','Goods and services sold to, or bought from, other countries.'],['Trade surplus / deficit','Exports greater than imports (surplus), or less than imports (deficit).'],['Exchange rate','The price of one currency in terms of another.'],['Balance of payments','A record of all money flowing in and out of the country.']],
+  life:'The price of an imported phone depends partly on the exchange rate between the A$ and the US$.'}
+};
+
+// connections: lens A–F, pairs 1–9, hub H
+const CONN={
+A:{a:'intro',b:'govt',kind:'∩',
+ plain:'Governments use economic ideas and data to decide what to do, and sometimes they nudge behaviour instead of forcing it.',
+ terms:[['Nudge','A small change in how choices are presented that steers people without banning anything.'],['Business cycle','The regular ups and downs in economic activity over time.'],['Stabilisation','Policy used to smooth out those ups and downs.']],
+ ex:['Reminders and defaults','Instead of fining people, an agency might send a reminder saying most people have already paid on time. It costs little and keeps everyone’s freedom of choice.'],
+ chain:['Data show growth slowing and unemployment rising','The government sees a risk of recession','It lifts spending or cuts taxes to support demand','Activity steadies and the downturn is milder'],
+ q:['Why might a government prefer a nudge to a ban?','Nudges keep freedom of choice, are cheap to run and meet less resistance. The trade-off is that they may be less effective when a behaviour is strongly entrenched.']},
+B:{a:'govt',b:'markets',kind:'∩',
+ plain:'When a market gets the outcome wrong (market failure), government may step in. But intervention can go wrong too.',
+ terms:[['Market failure','When markets alone do not allocate resources efficiently.'],['Subsidy','A payment from government that lowers the cost of producing or buying something.'],['Government failure','When intervention makes the outcome worse or creates new problems.'],['Rent-seeking','Lobbying for benefits without creating any new wealth.']],
+ ex:['Energy transition','Pollution is an external cost, so a market makes too much of it. Governments can tax emissions or subsidise cleaner options, but poor design or lobbying can waste public money.'],
+ chain:['Producing something creates pollution paid for by others','The market produces more than society would choose','The government taxes, regulates or subsidises','Output moves closer to the best outcome for society','Poor design or lobbying can still create government failure'],
+ q:['A government caps rents to improve housing affordability. Give one intended benefit and one unintended consequence.','Intended: existing tenants pay less. Unintended: fewer rentals may be offered, or landlords may spend less on upkeep, so shortages and lower quality are possible.']},
+C:{a:'markets',b:'hb',kind:'∩',
+ plain:'In product markets households buy from businesses. In factor markets it flips: households sell their labour and businesses buy it.',
+ terms:[['Product market','Where goods and services are bought and sold.'],['Factor market','Where land, labour, capital and enterprise are bought and sold.'],['Consumer sovereignty','Consumers’ spending decisions steer what businesses produce.'],['PED','How much quantity demanded changes when price changes.']],
+ ex:['Supermarket groceries','Staples such as milk have inelastic demand: if the price rises a little, households still buy almost as much. That gives a business room to raise prices.'],
+ chain:['A business raises the price of a staple','Households cut back only slightly (inelastic demand)','Total revenue rises','The business has an incentive to keep the higher price'],
+ q:['Why does a business care whether demand for its product is elastic or inelastic?','It decides what a price change does to revenue. With inelastic demand a price rise increases revenue. With elastic demand it reduces revenue.']},
+D:{a:'hb',b:'fin',kind:'∩',
+ plain:'What households save becomes the funds that others borrow, and interest rates link the two.',
+ terms:[['MPS','The share of extra income that is saved.'],['Superannuation','Compulsory saving for retirement, invested in financial markets.'],['Interest rate','The return to savers and the cost to borrowers.'],['Confidence','How optimistic households and businesses feel; it affects how much they borrow and spend.']],
+ ex:['RBA cash rate and housing affordability','When the RBA lifts the cash rate, banks raise loan rates, repayments rise and borrowing capacity falls, so homes become harder to afford and households spend less on other things.'],
+ chain:['The RBA raises the cash rate','Banks raise the interest rates on loans','Mortgage repayments rise and borrowing capacity falls','Households spend less (their MPC applies to a smaller disposable income)','Demand cools and housing becomes harder to afford'],
+ q:['How can the same interest rate rise be good for a saver but bad for a borrower?','Interest is a return to savers but a cost to borrowers. A higher rate pays savers more and makes borrowers pay more.']},
+E:{a:'fin',b:'intl',kind:'∩',
+ plain:'Money crosses borders. Foreign investors buy Australian shares and bonds, and Australians invest overseas.',
+ terms:[['Foreign equity','Overseas ownership of Australian businesses (shares).'],['Foreign debt','Money Australia owes to overseas lenders.'],['Capital flow','Money moving between countries to buy assets.'],['Exchange rate','The price of the A$ in other currencies.']],
+ ex:['Super funds and mining investment','Your super fund may own overseas shares, while foreign investors may fund an Australian mining project. Both create flows of money across borders.'],
+ chain:['Australian interest rates rise compared with other countries','Foreign investors want more Australian assets','Demand for the A$ rises','The A$ appreciates (tends to)','Imports get cheaper and exports dearer'],
+ q:['When the A$ appreciates, what happens to the A$ price of imports?','It falls, because each A$ now buys more foreign currency, so imports cost less in Australian dollars.']},
+F:{a:'intl',b:'intro',kind:'∩',
+ plain:'Trade is a choice shaped by opportunity cost. People and countries trade because both sides can end up better off.',
+ terms:[['Voluntary exchange','Trade that both sides agree to because each expects to gain.'],['Opportunity cost','What is given up to get something.'],['Pre-industrial economy','An economy before industrialisation, often based on local resources and traditional exchange.']],
+ ex:['Macassan trade and iron ore','Long before European settlement, Macassan trepangers traded with Aboriginal people of northern Australia. Today Australia exports iron ore and imports goods it would give up more to make itself. The idea is the same.'],
+ chain:['Each side has something the other values more than it values its own','They exchange voluntarily','Both receive something worth more to them than what they gave up','Both are better off than if they had not traded'],
+ q:['Why is voluntary trade only likely if both sides gain?','Nobody agrees to a deal that leaves them worse off. Each side gives up something it values less than what it receives.']},
+1:{a:'intro',b:'markets',
+ plain:'Demand and supply graphs are models. They rely on simplifying assumptions so we can see one effect at a time.',
+ terms:[['Model','A simplified picture of reality used to predict and explain.'],['Ceteris paribus','Other things held equal.'],['Efficiency','Resources used so that no one can be made better off without making someone worse off.'],['Price mechanism','Prices act as signals that guide what, how and for whom to produce.']],
+ ex:['Concert tickets','When demand for tickets jumps, there is a shortage at the old price. Price rises, some buyers drop out and sellers offer more until the market balances.'],
+ chain:['Demand rises (other things equal)','There is a shortage at the current price','Price rises','Quantity demanded falls and quantity supplied rises','A new equilibrium is reached'],
+ q:['Why do economists say “ceteris paribus” when drawing a demand curve?','To isolate the effect of price alone. If other factors changed too, you could not tell which one caused the change.']},
+2:{a:'intro',b:'hb',
+ plain:'Households earn incomes by supplying factors of production, and better technology or productivity expands what the economy can make.',
+ terms:[['Factors of production','Land, labour, capital and enterprise.'],['Factor incomes','Rent, wages, interest and profit.'],['Productivity','Output per unit of input.'],['PPF shift','An outward shift means the economy can produce more of everything.']],
+ ex:['AI and automation','A business adopts an AI tool and each worker produces more. The economy’s PPF shifts out and costs per unit fall, but some tasks change, so demand for some kinds of labour shifts too.'],
+ chain:['A business adopts new technology','Output per worker rises','The economy’s PPF shifts outward','Cost per unit can fall','Demand for some kinds of labour changes, so factor incomes shift'],
+ q:['Why does higher productivity shift the PPF outward instead of moving along it?','Because it increases the maximum output possible from the same resources. A movement along the curve only trades one good for another.']},
+3:{a:'intro',b:'fin',
+ plain:'Money makes exchange possible, and saving turns today’s income into funds for tomorrow’s investment.',
+ terms:[['Functions of money','Medium of exchange, store of value, unit of account.'],['Saving (S)','Income not spent; a leakage from the circular flow.'],['Investment (I)','Spending on capital goods; an injection into the circular flow.'],['Interest','The factor income earned by lending funds.']],
+ ex:['Your savings account','The money you deposit is lent by the bank to a business that buys equipment. Your saving becomes someone else’s investment.'],
+ chain:['A household saves part of its income','The deposit sits with a bank','The bank lends it to a business','The business invests in equipment','Future production capacity rises'],
+ q:['Why is saving a leakage but investment an injection?','Saving is income not spent on domestic goods, so it leaves the flow. Investment is spending on capital goods, so it adds to the flow.']},
+4:{a:'govt',b:'hb',
+ plain:'Government tax, transfer and regulation decisions change household incomes and shape what businesses can do.',
+ terms:[['Transfer payment','A payment from government to households with nothing produced in return, such as a pension.'],['Disposable income','Income after tax and transfers.'],['Minimum wage','The lowest hourly pay an employer may legally offer.'],['Sludge','Friction that makes a desirable action harder to complete.']],
+ ex:['Minimum wage decision','When the minimum wage rises, low-paid workers have more income and tend to spend most of it. Businesses face higher labour costs and may raise prices or hire fewer workers.'],
+ chain:['The minimum wage is increased','Low-wage workers’ incomes rise','They spend most of the extra (high MPC)','Demand for goods and services rises','Businesses face higher labour costs and may adjust prices or hiring'],
+ q:['Why might extra income for low-wage earners boost spending more than the same amount for high-income earners?','Lower-income households tend to have a higher MPC. They spend more of each extra dollar, while higher earners tend to save more.']},
+5:{a:'govt',b:'fin',
+ plain:'Government policy affects how much people save and borrow, and the Reserve Bank steers interest rates.',
+ terms:[['RBA','Australia’s central bank, which sets the cash rate.'],['Cash rate','The interest rate on overnight loans between banks; it influences all other rates.'],['Superannuation concessions','Tax breaks that encourage saving for retirement.'],['Financial intermediary','An organisation that connects savers and borrowers.']],
+ ex:['Super tax concessions','Lower tax on super contributions makes saving through super more attractive, which increases the funds available to be invested.'],
+ chain:['The RBA changes the cash rate or the government changes a tax rule','Banks and funds adjust the rates and returns they offer','The cost of borrowing or reward for saving changes','The supply of and demand for funds change'],
+ q:['Give one way government policy can increase the supply of funds for investment.','Tax concessions on super encourage saving, which raises the pool of funds. Reducing a budget deficit can also leave more savings available for private borrowers.']},
+6:{a:'govt',b:'intl',
+ plain:'In the circular flow, government spending (G) and taxes (T) sit alongside exports (X) and imports (M).',
+ terms:[['Injection','Money added to the circular flow: I, G and X.'],['Leakage','Money leaving the circular flow: S, T and M.'],['Equilibrium','When I + G + X = S + T + M.'],['Import','A good or service bought from overseas.']],
+ ex:['Infrastructure spending','A new rail project injects money through G, but some of it leaks overseas when steel or machinery is imported.'],
+ chain:['The government spends on a rail project (G rises)','Incomes of builders and suppliers rise','Some of that income is spent on imports (M leakage)','Less stays in the domestic circular flow than first expected'],
+ q:['If injections are greater than leakages, what happens to national income?','National income rises until leakages grow large enough to match injections, where a new equilibrium is reached.']},
+7:{a:'markets',b:'fin',
+ plain:'Funds are traded in markets too. Borrowers demand, savers supply, and the interest rate is the price.',
+ terms:[['Loanable funds market','Where demand for and supply of savings set the interest rate.'],['Equity and debt markets','Where shares and bonds are issued and traded.'],['Asymmetric information','When one side of a deal knows more than the other.']],
+ ex:['Raising money for a business','A company can borrow (debt) or sell shares (equity). Either way, the price it pays reflects demand and supply for funds and how risky investors think it is.'],
+ chain:['Demand for loans rises','Interest rates rise if supply of funds stays the same','Some borrowers decide it is too costly and drop out','A new equilibrium quantity of funds is traded'],
+ q:['What happens to the interest rate if savers supply more funds (other things equal)?','It falls, because a larger supply of funds lowers their price.']},
+8:{a:'markets',b:'intl',
+ plain:'Australian businesses sell into world markets, and the exchange rate is the price of the A$ that links our prices to theirs.',
+ terms:[['Exchange rate','The price of one currency in another.'],['Appreciation / depreciation','The A$ rising or falling in value against another currency.'],['Trade composition','The mix of goods and services a country trades.']],
+ ex:['Iron ore and the A$','When world demand for iron ore rises, export income rises and demand for the A$ rises with it, tending to push the A$ up. That affects the price of every other Australian export and import. Aboriginal and Torres Strait Islander businesses also depend on access to markets, at home and abroad.'],
+ chain:['World demand for iron ore rises','Export income rises','Demand for the A$ rises','The A$ appreciates (tends to)','Other exporters become less price-competitive, importers benefit'],
+ q:['When the A$ depreciates, who benefits and who loses?','Exporters benefit because their goods are cheaper abroad. Importers and households buying imported goods lose because they pay more in A$.']},
+9:{a:'hb',b:'intl',
+ plain:'Households buy imports, and some businesses sell exports, so trade affects both what you can buy and who has work.',
+ terms:[['Imports (M)','Spending that flows overseas; a leakage.'],['Exports (X)','Overseas spending on Australian output; an injection.'],['Trade direction','Which countries Australia trades with.']],
+ ex:['Wine and electronics','A winemaker exports to overseas customers, while households buy imported phones and laptops. Each dollar on imports goes to foreign producers instead of Australian incomes.'],
+ chain:['Household income rises','Households buy more imported goods','Money flows to foreign producers (leakage)','Less income is passed on to Australian businesses and workers'],
+ q:['Why is spending on imports a leakage from the circular flow?','The money goes to overseas producers, so it does not become income for Australian households and businesses.']},
+H:{a:null,b:null,
+ plain:'All six areas meet in the circular flow of income: every sector gives money to others and receives it back.',
+ terms:[['Circular flow','The movement of money, goods and services between sectors.'],['Injections','I + G + X: spending added to the flow.'],['Leakages','S + T + M: money leaving the flow.'],['GDP','The total value of goods and services produced in a period.']],
+ ex:['A Budget measure','A government infrastructure project injects money. Wages are spent, some is saved or taxed, some goes on imports, and the rest circulates again.'],
+ chain:['Government spends (G injection)','Workers and businesses earn income','Some is spent again in markets, some is saved, taxed or used for imports','Spending that stays in the flow supports further production'],
+ q:['Explain how one injection can have effects in all five sectors.','For example, G injects money to businesses and households (household and business sector), some leaks as savings that flow to banks (financial), some as tax back to government (government), and some as imports (international). The rest returns to markets.']}
+};
+const PAIRS=['1','2','3','4','5','6','7','8','9'];
+const LENSK=['A','B','C','D','E','F'];
+
+const SCEN=[
+ {t:'The RBA lifts the cash rate and households find their mortgage repayments rise.',ok:['D','5'],why:'Interest links household decisions with the financial sector (D), and the RBA’s role links government policy with finance (5).'},
+ {t:'The government taxes a polluting industry to reduce emissions.',ok:['B'],why:'Pollution is a market failure, and tax is a government response (B).'},
+ {t:'A rising A$ makes imported cars cheaper.',ok:['8','9'],why:'The exchange rate is the price of the A$ in world markets (8), and households are the ones buying the imports (9).'},
+ {t:'Your super fund buys shares in an overseas company.',ok:['E'],why:'Super is a financial-sector investment, and it is a flow of foreign equity (E).'},
+ {t:'A business uses an AI tool and each worker now produces more.',ok:['2'],why:'Productivity and technology expand the PPF, while businesses earn and pay factor incomes (2).'},
+ {t:'A government agency sends reminder messages to nudge people to pay on time.',ok:['A'],why:'A nudge is behavioural economics applied by government (A).'},
+ {t:'The Fair Work Commission raises the minimum wage.',ok:['4'],why:'A government-backed wage rule changes household incomes and business costs (4).'},
+ {t:'Demand for tickets surges and the price rises, so only those who value them most will pay.',ok:['1'],why:'A demand and supply model using ceteris paribus and the price mechanism (1).'},
+ {t:'Macassan trepangers exchange goods with Aboriginal communities of northern Australia.',ok:['F'],why:'Voluntary exchange for mutual gain in a pre-industrial economy (F).'},
+ {t:'A new rail project is built and a lot of the steel is imported.',ok:['6','H'],why:'G is an injection while M is a leakage in the circular flow (6), which is the centre idea (H).'}
+];
+
+const NS='http://www.w3.org/2000/svg',CX=260,CY=240,D=125,R=108;
+const P=(a,rad)=>[CX+rad*Math.cos(a*Math.PI/180),CY+rad*Math.sin(a*Math.PI/180)];
+const svg=document.getElementById('ev-svg'),panel=document.getElementById('ev-panel');
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+const dots=(a,b)=>b?`<span class="dots"><i style="background:${COL[a]}"></i><i style="background:${COL[b]}"></i></span>`:`<span class="dots"><i style="background:${COL[a]}"></i></span>`;
+const dot1=k=>dots(k);
+
+// explored (per-viewer convenience, safe if storage is blocked)
+const SKEY='ecoVennStudentSeen';
+let seen=new Set();
+try{const s=localStorage.getItem(SKEY);if(s)seen=new Set(JSON.parse(s))}catch(e){}
+function saveSeen(){try{localStorage.setItem(SKEY,JSON.stringify([...seen]))}catch(e){}}
+const ALLK=[...LENSK,...PAIRS,'H'];
+
+document.getElementById('ev-legend').innerHTML=ORDER.map(k=>`<span><i style="background:${COL[k]}"></i>${SHORT[k]}</span>`).join('');
+
+const areaG={};
+ORDER.forEach(k=>{
+  const [x,y]=P(ANG[k],D);
+  const g=el('g',{class:'area',tabindex:0,role:'button','aria-label':NAME[k]+': explain this area'});
+  el('circle',{class:'fill',cx:x,cy:y,r:R,fill:COL[k],'fill-opacity':.15,stroke:COL[k],'stroke-width':2.6},g);
+  const [lx,ly]=P(ANG[k],D+68);
+  const t=el('text',{x:lx,y:ly,'text-anchor':'middle',fill:COL[k]},g);
+  const ls=LINES[k];
+  ls.forEach((s,i)=>{const ts=el('tspan',{x:lx,dy:i===0?(ls.length===1?'.35em':'-.2em'):'1.2em'},t);ts.textContent=s});
+  g.addEventListener('click',()=>{if(!chal)select({t:'area',k})});
+  g.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!chal){e.preventDefault();select({t:'area',k})}});
+  g.addEventListener('mouseenter',()=>g.classList.add('hov'));
+  g.addEventListener('mouseleave',()=>g.classList.remove('hov'));
+  areaG[k]=g;
+});
+const linkPath=el('path',{class:'link',d:''});
+const hubG=el('g',{class:'hub',tabindex:0,role:'button','aria-label':'Circular flow: link across all six areas'});
+el('circle',{cx:CX,cy:CY,r:36},hubG);
+[['CIRCULAR',-8],['FLOW',5]].forEach(([s,dy])=>{const t=el('text',{x:CX,y:CY+dy,'font-size':9.5},hubG);t.textContent=s});
+const ht=el('text',{x:CX,y:CY+20,'font-size':7.5,style:'font-weight:400'},hubG);ht.textContent='all six sectors';
+hubG.addEventListener('click',()=>conn('H'));
+hubG.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();conn('H')}});
+
+const badgeG={};
+LENSK.forEach(k=>{
+  const C=CONN[k];let a1=ANG[C.a],a2=ANG[C.b],m=(a1+a2)/2;if(Math.abs(a1-a2)>180)m=(a1+a2+360)/2;
+  const [x,y]=P(m,D*0.866);
+  const g=el('g',{class:'badge',tabindex:0,role:'button','aria-label':`Overlap ${k}: ${SHORT[C.a]} and ${SHORT[C.b]}`});
+  el('circle',{cx:x,cy:y,r:12},g);
+  const t=el('text',{x,y},g);t.textContent=k;
+  el('circle',{class:'tick',cx:x+9,cy:y-9,r:4.5},g);
+  g.addEventListener('click',()=>conn(k));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();conn(k)}});
+  badgeG[k]=g;
+});
+const longWrap=document.getElementById('ev-long');
+PAIRS.forEach(k=>{
+  const C=CONN[k];const b=document.createElement('button');b.type='button';b.className='tag';b.dataset.k=k;
+  b.innerHTML=`${dots(C.a,C.b)}<span>${k}. ${SHORT[C.a]} ↔ ${SHORT[C.b]}</span>`;
+  b.addEventListener('click',()=>conn(k));longWrap.appendChild(b);
+});
+svg.insertBefore(linkPath,hubG);
+
+function title(k){const C=CONN[k];if(k==='H')return 'Circular flow: all six areas';return LENSK.includes(k)?`${k}: ${SHORT[C.a]} ∩ ${SHORT[C.b]}`:`${k}: ${SHORT[C.a]} ↔ ${SHORT[C.b]}`}
+function termsHtml(t){return '<dl>'+t.map(x=>`<dt>${esc(x[0])}</dt><dd>${esc(x[1])}</dd>`).join('')+'</dl>'}
+function tagBtn(label,d,sel){return `<button type="button" class="tag" data-sel='${JSON.stringify(sel)}'>${d||''}<span>${label}</span></button>`}
+
+function introPanel(){
+  return `<h2>Start anywhere</h2>
+  <p>Each circle is a focus area. The lettered badges (A–F) sit where neighbouring areas overlap, and the centre shows the circular flow that joins them all. Nine more links are listed under the diagram.</p>
+  <p>Tap any badge or link to see a plain-English explanation, a real example, a cause-and-effect chain and a question to test yourself.</p>
+  <h3>Or begin with an area</h3>
+  <div class="tags">${ORDER.map(k=>tagBtn(SHORT[k],dot1(k),{t:'area',k})).join('')}</div>
+  <h3>Test yourself</h3>
+  <p>Read a headline and decide which connection it shows.</p>
+  <button class="btn" type="button" id="ev-start">Spot the connection</button>`;
+}
+function areaPanel(k){
+  const A=AREA[k];
+  const nb=LENSK.filter(x=>CONN[x].a===k||CONN[x].b===k);
+  const lg=PAIRS.filter(x=>CONN[x].a===k||CONN[x].b===k);
+  const mk=x=>{const o=CONN[x].a===k?CONN[x].b:CONN[x].a;return tagBtn(`${x}: ${SHORT[o]}`,dots(k,o),{t:'conn',k:x})};
+  return `<h2 style="color:${COL[k]}">${NAME[k]}</h2>
+  <h3>In plain words</h3><p>${esc(A.plain)}</p>
+  <h3>Key terms</h3>${termsHtml(A.terms)}
+  <h3>You already do this</h3><div class="exbox">${esc(A.life)}</div>
+  <h3>Where it connects</h3>
+  <div class="tags">${nb.map(mk).join('')}${lg.map(mk).join('')}</div>
+  <button class="reset" type="button">Clear selection</button>`;
+}
+function connPanel(k){
+  const C=CONN[k];
+  const goto=(C.a?[C.a,C.b]:[]).map(x=>tagBtn(SHORT[x],dot1(x),{t:'area',k:x})).join('');
+  return `<h2>${esc(title(k))}</h2>
+  <p class="meta">${C.a?dots(C.a,C.b)+' ':''}${seen.has(k)?'Explored':''}</p>
+  <h3>In plain words</h3><p>${esc(C.plain)}</p>
+  <h3>Key terms</h3>${termsHtml(C.terms)}
+  <h3>Real-world example</h3><div class="exbox"><b>${esc(C.ex[0])}</b>${esc(C.ex[1])}</div>
+  <h3>Follow the chain</h3><ol class="chain">${C.chain.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+  <h3>Check yourself</h3>
+  <div class="q">${esc(C.q[0])}</div>
+  <button class="btn ghost" type="button" id="ev-reveal">Show a model answer</button>
+  <div class="ans" id="ev-ans">${esc(C.q[1])}</div>
+  ${goto?`<h3>Go to</h3><div class="tags">${goto}</div>`:''}
+  <button class="reset" type="button">Clear selection</button>`;
+}
+
+// ---- challenge
+let chal=null;
+function challengePanel(){
+  const s=SCEN[chal.order[chal.n]];
+  if(chal.n>=SCEN.length){
+    return `<h2>Challenge complete</h2><p class="res good">You scored ${chal.score} out of ${SCEN.length}.</p>
+    <p>${chal.score===SCEN.length?'Every connection spotted.':'Open any connection you missed and work through its chain, then try again.'}</p>
+    <button class="btn" type="button" id="ev-again">Try again</button> <button class="btn ghost" type="button" id="ev-exit">Back to exploring</button>`;
+  }
+  let body=`<h2>Spot the connection (${chal.n+1} of ${SCEN.length})</h2>
+  <div class="q">${esc(s.t)}</div>`;
+  if(!chal.picked){
+    body+=`<p>Tap the badge, centre or link that best shows the connection. Some headlines fit more than one.</p>`;
+  }else{
+    const good=s.ok.includes(chal.picked);
+    body+=`<p class="res ${good?'good':'bad'}">${good?'Yes!':'Not quite.'} You chose ${esc(title(chal.picked))}.</p>
+    <p>${esc(s.why)}</p>
+    <p class="meta">Best answer${s.ok.length>1?'s':''}: ${s.ok.map(x=>esc(title(x))).join(' or ')}</p>
+    <div class="tags"><button class="btn" type="button" id="ev-next">${chal.n+1<SCEN.length?'Next headline':'See my score'}</button>
+    ${tagBtn('Show me: '+esc(title(s.ok[0])),'',{t:'conn',k:s.ok[0]}).replace('class="tag"','class="tag" data-leave="1"')}</div>`;
+  }
+  body+=`<button class="reset" type="button" id="ev-exit">Stop the challenge</button>`;
+  return body;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startChallenge(){chal={order:shuffle(SCEN.map((_,i)=>i)),n:0,score:0,picked:null};cur=null;paint()}
+function exitChallenge(){chal=null;cur=null;paint()}
+
+let cur=null;
+function conn(k){
+  if(chal){if(chal.picked||chal.n>=SCEN.length)return;chal.picked=k;if(SCEN[chal.order[chal.n]].ok.includes(k))chal.score++;paint();return}
+  select({t:'conn',k});
+}
+function select(s){cur=(cur&&JSON.stringify(cur)===JSON.stringify(s))?null:s;paint()}
+
+function paint(){
+  const active=new Set();let curK=null,hub=false;
+  if(!chal&&cur){
+    if(cur.t==='area')active.add(cur.k);
+    if(cur.t==='conn'){curK=cur.k;const C=CONN[cur.k];if(cur.k==='H'){hub=true;ORDER.forEach(x=>active.add(x))}else{active.add(C.a);active.add(C.b)}
+      if(!seen.has(cur.k)){seen.add(cur.k);saveSeen()}}
+  }
+  ORDER.forEach(k=>{areaG[k].classList.toggle('on',active.has(k)&&!hub);areaG[k].classList.toggle('dim',!!cur&&!chal&&!active.has(k))});
+  LENSK.forEach(k=>{badgeG[k].classList.toggle('on',k===curK);badgeG[k].classList.toggle('seen',seen.has(k))});
+  hubG.classList.toggle('on',hub);
+  document.querySelectorAll('#ev-long .tag').forEach(b=>{b.classList.toggle('on',b.dataset.k===curK);b.classList.toggle('seen',seen.has(b.dataset.k)&&b.dataset.k!==curK)});
+  if(curK&&PAIRS.includes(curK)){
+    const C=CONN[curK];const [x1,y1]=P(ANG[C.a],D),[x2,y2]=P(ANG[C.b],D);
+    linkPath.setAttribute('d',`M${x1},${y1} Q${CX},${CY} ${x2},${y2}`);linkPath.classList.add('on');
+  }else linkPath.classList.remove('on');
+  const n=ALLK.filter(k=>seen.has(k)).length;
+  document.getElementById('ev-progtxt').textContent=`Explored ${n} of ${ALLK.length} connections`;
+  document.getElementById('ev-bar').style.width=(n/ALLK.length*100)+'%';
+
+  panel.innerHTML=chal?challengePanel():!cur?introPanel():cur.t==='area'?areaPanel(cur.k):connPanel(cur.k);
+  panel.querySelectorAll('[data-sel]').forEach(b=>b.addEventListener('click',()=>{
+    const s=JSON.parse(b.dataset.sel);if(chal&&b.dataset.leave)chal=null;cur=null;select(s)}));
+  const rst=panel.querySelector('.reset:not(#ev-exit)');if(rst)rst.addEventListener('click',()=>{cur=null;paint()});
+  const rv=document.getElementById('ev-reveal');if(rv)rv.addEventListener('click',()=>{const a=document.getElementById('ev-ans');const o=a.classList.toggle('show');rv.textContent=o?'Hide the model answer':'Show a model answer'});
+  const st=document.getElementById('ev-start');if(st)st.addEventListener('click',startChallenge);
+  const nx=document.getElementById('ev-next');if(nx)nx.addEventListener('click',()=>{chal.n++;chal.picked=null;paint()});
+  const ex=document.getElementById('ev-exit');if(ex)ex.addEventListener('click',exitChallenge);
+  const ag=document.getElementById('ev-again');if(ag)ag.addEventListener('click',startChallenge);
+}
+paint();
+})();
+</script>
+</body></html>

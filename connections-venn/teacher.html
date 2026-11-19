@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Year 11 Economics 2027: How the six focus areas connect</title>
+<style>
+/* Everything is scoped to .ev so the block can be pasted into an existing page */
+.ev{--ink:#163A4A;--copper:#C9752B;--muted:#4a5b64;--line:#d6dde1;--bg:#fff;
+  font-family:"Helvetica Neue",Arial,"Liberation Sans",sans-serif;color:var(--ink);background:var(--bg);
+  max-width:1100px;margin:0 auto;padding:16px;box-sizing:border-box}
+.ev *{box-sizing:border-box}
+.ev h1{font-size:22px;line-height:1.2;margin:0 0 2px}
+.ev .sub{font-size:13px;color:var(--muted);margin:0 0 12px}
+.ev .grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-areas:"v p" "r p";gap:12px 20px;align-items:start}
+.ev .gv{grid-area:v}.ev .gp{grid-area:p}.ev .rows{grid-area:r}
+@media (max-width:820px){.ev .grid{grid-template-columns:1fr;grid-template-areas:"v" "p" "r"}.ev .panel{min-height:0}}
+.ev svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.ev .area{cursor:pointer;outline:none}
+.ev .area circle.fill{transition:fill-opacity .2s,stroke-width .2s,opacity .2s}
+.ev .area text{pointer-events:none;font-weight:700;font-size:11.5px;transition:opacity .2s}
+.ev .area:focus-visible circle.fill{stroke-width:5}
+.ev .dim circle.fill{fill-opacity:.04!important;opacity:.55}
+.ev .dim text{opacity:.35}
+.ev .on circle.fill{fill-opacity:.34!important;stroke-width:4.5}
+.ev .hov circle.fill{fill-opacity:.26}
+.ev .badge{cursor:pointer;outline:none}
+.ev .badge circle{fill:var(--ink);stroke:#fff;stroke-width:2;transition:fill .2s}
+.ev .badge text{fill:#fff;font-weight:700;font-size:11px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.ev .badge:hover circle,.ev .badge:focus-visible circle,.ev .badge.on circle{fill:var(--copper)}
+.ev .badge:focus-visible circle{stroke:var(--ink);stroke-width:3}
+.ev .hub{cursor:pointer;outline:none}
+.ev .hub circle{fill:#fff;stroke:var(--copper);stroke-width:2.5;transition:fill .2s}
+.ev .hub.on circle,.ev .hub:hover circle,.ev .hub:focus-visible circle{fill:#fbeedf}
+.ev .hub text{pointer-events:none;text-anchor:middle;font-weight:700;fill:var(--copper)}
+.ev .link{fill:none;stroke:var(--copper);stroke-width:3;stroke-dasharray:7 6;opacity:0;transition:opacity .2s;pointer-events:none}
+.ev .link.on{opacity:1}
+.ev .panel{border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-height:340px;background:#fff}
+.ev .panel h2{font-size:17px;margin:0 0 4px;line-height:1.25}
+.ev .panel .meta{font-size:12px;color:var(--muted);margin:0 0 10px}
+.ev .panel h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--copper);margin:14px 0 5px}
+.ev .panel p{font-size:13.5px;line-height:1.45;margin:0 0 8px}
+.ev .panel ul{margin:0 0 6px;padding-left:18px;font-size:13.5px;line-height:1.45}
+.ev .panel li{margin:0 0 3px}
+.ev .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+.ev button.tag{font:inherit;font-size:12px;line-height:1.2;color:var(--ink);background:#fff;border:1px solid var(--ink);border-radius:999px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-align:left}
+.ev button.tag:hover,.ev button.tag:focus-visible{background:var(--ink);color:#fff;outline:none}
+.ev button.tag.on{background:var(--copper);border-color:var(--copper);color:#fff}
+.ev .dots{display:inline-flex}
+.ev .dots i{width:9px;height:9px;border-radius:50%;display:block;border:1px solid #fff}
+.ev .dots i+i{margin-left:-3px}
+.ev .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 10px;font-size:12px}
+.ev .legend span{display:inline-flex;align-items:center;gap:5px}
+.ev .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.ev .reset{font:inherit;font-size:12px;border:0;background:none;color:var(--copper);text-decoration:underline;cursor:pointer;padding:0;margin-top:8px}
+.ev .hint{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.ev .rows{margin-top:6px}
+.ev .rows h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--copper);margin:0 0 6px}
+.ev .note{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.4}
+.ev .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){.ev *{transition:none!important}}
+</style></head>
+<body>
+<div class="ev" id="ev">
+  <h1>Year 11 Economics: how the six focus areas connect</h1>
+  <p class="sub">Economics 11–12 Syllabus (2025). Select a circle, a lettered overlap, the centre, or a link below.</p>
+  <div class="legend" id="ev-legend"></div>
+  <div class="grid">
+    <div class="gv">
+      <svg id="ev-svg" viewBox="0 0 520 480" role="group" aria-label="Venn diagram of the six Year 11 Economics focus areas"></svg>
+    </div>
+    <div class="panel gp" id="ev-panel" aria-live="polite"></div>
+    <div class="rows">
+      <h3>Links beyond the ring (all other pairs)</h3>
+      <div class="tags" id="ev-long"></div>
+    </div>
+  </div>
+  <p class="note">Concepts are drawn from the Economics 11–12 (2025) Year 11 content. Weeks refer to the 2027 Scope and Sequence (T = term, Wk = week). Aboriginal and Torres Strait Islander content should be checked with the school's AECG contact under ICIP protocols.</p>
+</div>
+
+<script>
+(function(){
+const COL={intro:'#163A4A',govt:'#7A3E6D',markets:'#1F8A8A',hb:'#4C8C4A',fin:'#C9752B',intl:'#2F6DB5'};
+const NAME={intro:'Introduction to economics',govt:'Government sector',markets:'Markets',hb:'Household and business sector',fin:'Financial sector',intl:'International sector'};
+const SHORT={intro:'Introduction',govt:'Government',markets:'Markets',hb:'Household & business',fin:'Financial',intl:'International'};
+const LINES={intro:['Introduction','to economics'],govt:['Government','sector'],markets:['Markets'],hb:['Household and','business sector'],fin:['Financial','sector'],intl:['International','sector']};
+const HRS={intro:'25 hours · T1 Wk 2–6',markets:'35 hours · T1 Wk 7 – T2 Wk 4',hb:'15 hours · T2 Wk 5–7',fin:'15 hours · T2 Wk 8–10',govt:'15 hours · T3 Wk 2–4',intl:'15 hours · T3 Wk 5–7'};
+const ORDER=['intro','govt','markets','hb','fin','intl'];
+const ANG={intro:-90,govt:-30,markets:30,hb:90,fin:150,intl:210};
+const EX={
+ intro:['Scarcity and opportunity cost','Cost–benefit analysis and incentives','Production possibilities frontier (PPF)','Economic systems and money','Behavioural economics'],
+ govt:['Budget and the tax–transfer system','Taxes: types, a good tax, reform','Spending: recurrent and non-recurrent','Privatisation versus nationalisation'],
+ markets:['Demand, supply and equilibrium','Price elasticity (PED, PES)','Market structures','Externalities and public goods'],
+ hb:['Utility, MPC and MPS','Consumer sovereignty','Profit, productivity, long-run average cost','Labour supply and wages'],
+ fin:['Financial intermediaries and superannuation','Equity (share) markets','Debt and bond markets','Loanable funds and interest rates'],
+ intl:['Australia’s trade: value, direction, composition','Trade outcomes: surplus and deficit','Bilateral exchange rates','Balance of payments (purpose)']
+};
+const LENS=[
+ {k:'A',a:'intro',b:'govt',t:['Government as an economic agent','Data inform policy','Nudges','Business cycle and stabilisation'],
+  c:'Role of government (welfare-maximising agent, stabilisation); role of data in informing public policy and forecasting; behavioural economics and government nudges; effects of business-cycle fluctuations on government.',
+  w:'T1 Wk 3 and Wk 6 (data, behavioural economics, business cycle) revisited in T3 Wk 2 (role of government, nudges).'},
+ {k:'B',a:'govt',b:'markets',t:['Market failure and intervention','Taxes, subsidies, price controls','Government failure, rent-seeking'],
+  c:'Rationale for government intervention; taxes, subsidies, direct provision, regulation, price and quantity controls, nudges; limitations of intervention; government failure, unintended consequences and rent-seeking; correction of market failure as a government role.',
+  w:'T2 Wk 3–4 (market failure, intervention, government failure) before T3 Wk 2 (role of government).'},
+ {k:'C',a:'markets',b:'hb',t:['Demand: households. Supply: businesses','Factor and product markets','PED and PES for business'],
+  c:'Law of demand (households) and law of supply (businesses); relationship between factor markets and product markets; labour supply and demand for labour; significance of PED and PES for businesses; consumer sovereignty.',
+  w:'T1 Wk 7–11 (demand, supply, elasticity) revisited in T2 Wk 5–7 (households, labour, businesses).'},
+ {k:'D',a:'hb',b:'fin',t:['Savings, MPS, superannuation','Confidence drives demand for funds','Interest rates and housing affordability'],
+  c:'Savings as deferred consumption, MPS; superannuation as savings and investment; interest as the return on savings and cost of credit; consumer and business confidence as factors in demand for funds; effects of interest rates on housing affordability.',
+  w:'T2 Wk 5 (consumption and saving) to T2 Wk 8–10 (super, interest rates, housing affordability).'},
+ {k:'E',a:'fin',b:'intl',t:['Foreign debt and equity','Foreign investment funds supply','Exchange rates and capital flows'],
+  c:'Foreign debt and foreign equity as international investment flows; foreign investment as a source of supply of funds; interest rates as an indicator of risk; role of exchange rates in facilitating trade and investment flows.',
+  w:'T2 Wk 9 (equity and debt markets) to T3 Wk 6–7 (international investment, exchange rates).'},
+ {k:'F',a:'intl',b:'intro',t:['Voluntary exchange and efficiency','Mutual benefit and opportunity cost','Pre-industrial economies and trade routes'],
+  c:'Voluntary exchange for mutual benefit and efficient allocation of resources; opportunity cost; exports and imports as an injection and a leakage; pre-industrial economic systems and historical trade routes (e.g. Macassan trade).',
+  w:'T1 Wk 4–5 (systems, PPF, circular flow) revisited in T3 Wk 5 (role and basis of trade).'}
+];
+const LONG=[
+ ['intro','markets','Models, assumptions, efficiency','Models and assumptions (ceteris paribus, rational behaviour) underpin demand and supply graphs; PPF efficiency links to the efficiency of market equilibrium; the price mechanism answers the key economic questions in free-market systems.'],
+ ['intro','hb','Agents, factor incomes, productivity','Consumers and producers as economic agents; factors of production and factor incomes (rent, wages, interest, profit); technological advance and productivity shifting the PPF.'],
+ ['intro','fin','Money; saving and investment flows','Forms and functions of money; interest as a factor income; savings (S) and investment (I) as a leakage and an injection in the circular flow.'],
+ ['govt','hb','Taxes, transfers, minimum wage, regulation','Taxation of income and profit; transfer payments; minimum wage and government policy as influences on demand for labour; regulation of harmful business practices; nudges and sludges.'],
+ ['govt','fin','Policy and the supply of funds','Government policies as a factor in the demand for and supply of funds; superannuation concessions as a tax-reform example; the RBA as the central bank among financial intermediaries.'],
+ ['govt','intl','G and T with X and M','Government spending (G) and taxation (T) alongside exports (X) and imports (M) as injections and leakages in the circular flow and the equilibrium condition.'],
+ ['markets','fin','Loanable funds as a market','Demand and supply of funds set the interest rate (the price of money); primary and secondary share and bond markets; adverse selection in health insurance as asymmetric information.'],
+ ['markets','intl','Trade, price of the A$, market access','Voluntary exchange in markets across borders; bilateral exchange rates as the price of the Australian dollar; Australia’s trade composition; Aboriginal and Torres Strait Islander businesses’ access to markets and trade.'],
+ ['hb','intl','Imports, exports and business','Consumption and imports (M); businesses as exporters (X); the value, direction and composition of trade as it affects households and businesses.']
+];
+const HUB={c:'Circular flow of income: roles of the household, business, financial, government and international sectors; injections (I, G, X) and leakages (S, T, M); equilibrium I + G + X = S + T + M; GDP and the business cycle.',
+ w:'Introduced T1 Wk 5–6; each later sector returns to its own flows.'};
+
+const NS='http://www.w3.org/2000/svg',CX=260,CY=240,D=125,R=108;
+const P=(a,rad)=>[CX+rad*Math.cos(a*Math.PI/180),CY+rad*Math.sin(a*Math.PI/180)];
+const svg=document.getElementById('ev-svg'),panel=document.getElementById('ev-panel');
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+const dots=(a,b)=>`<span class="dots"><i style="background:${COL[a]}"></i><i style="background:${COL[b]}"></i></span>`;
+
+// legend
+document.getElementById('ev-legend').innerHTML=ORDER.map(k=>`<span><i style="background:${COL[k]}"></i>${SHORT[k]}</span>`).join('');
+
+// circles
+const areaG={};
+ORDER.forEach(k=>{
+  const [x,y]=P(ANG[k],D);
+  const g=el('g',{class:'area',tabindex:0,role:'button','aria-label':NAME[k]+': show concepts and links'});
+  el('circle',{class:'fill',cx:x,cy:y,r:R,fill:COL[k],'fill-opacity':.15,stroke:COL[k],'stroke-width':2.6},g);
+  const [lx,ly]=P(ANG[k],D+68);
+  const t=el('text',{x:lx,y:ly,'text-anchor':'middle',fill:COL[k]},g);
+  const ls=LINES[k];
+  ls.forEach((s,i)=>{const ts=el('tspan',{x:lx,dy:i===0?(ls.length===1?'.35em':'-.2em'):'1.2em'},t);ts.textContent=s});
+  g.addEventListener('click',()=>select({t:'area',k}));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select({t:'area',k})}});
+  g.addEventListener('mouseenter',()=>{g.classList.add('hov')});
+  g.addEventListener('mouseleave',()=>{g.classList.remove('hov')});
+  areaG[k]=g;
+});
+
+// dashed link for long-range pairs
+const linkPath=el('path',{class:'link',d:''});
+
+// hub
+const hubG=el('g',{class:'hub',tabindex:0,role:'button','aria-label':'Circular flow: link across all six areas'});
+el('circle',{cx:CX,cy:CY,r:36},hubG);
+[['CIRCULAR',-8],['FLOW',5]].forEach(([s,dy])=>{const t=el('text',{x:CX,y:CY+dy,'font-size':9.5},hubG);t.textContent=s});
+const ht=el('text',{x:CX,y:CY+20,'font-size':7.5,style:'font-weight:400'},hubG);ht.textContent='all six sectors';
+hubG.addEventListener('click',()=>select({t:'hub'}));
+hubG.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select({t:'hub'})}});
+
+// lens badges
+const badgeG={};
+LENS.forEach(L=>{
+  let a1=ANG[L.a],a2=ANG[L.b],m=(a1+a2)/2;if(Math.abs(a1-a2)>180)m=(a1+a2+360)/2;
+  const [x,y]=P(m,D*0.866);
+  const g=el('g',{class:'badge',tabindex:0,role:'button','aria-label':`Overlap ${L.k}: ${SHORT[L.a]} and ${SHORT[L.b]}`});
+  el('circle',{cx:x,cy:y,r:12},g);
+  const t=el('text',{x,y},g);t.textContent=L.k;
+  g.addEventListener('click',()=>select({t:'lens',k:L.k}));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select({t:'lens',k:L.k})}});
+  badgeG[L.k]=g;
+});
+
+// long-range chips
+const longWrap=document.getElementById('ev-long');
+LONG.forEach((l,i)=>{
+  const b=document.createElement('button');b.type='button';b.className='tag';b.dataset.i=i;
+  b.innerHTML=`${dots(l[0],l[1])}<span>${i+1}. ${SHORT[l[0]]} ↔ ${SHORT[l[1]]}</span>`;
+  b.addEventListener('click',()=>select({t:'pair',i}));
+  longWrap.appendChild(b);
+});
+
+function lensBetween(a,b){return LENS.find(L=>(L.a===a&&L.b===b)||(L.a===b&&L.b===a))}
+function list(a){return '<ul>'+a.map(s=>`<li>${esc(s)}</li>`).join('')+'</ul>'}
+function tagBtn(label,dotsHtml,sel){return `<button type="button" class="tag" data-sel='${JSON.stringify(sel)}'>${dotsHtml||''}<span>${label}</span></button>`}
+
+function intro(){
+  return `<h2>Start anywhere</h2>
+  <p>Each circle is a Year 11 focus area. Where neighbouring circles overlap, the lettered badge opens the concepts both areas share. The centre links all six through the circular flow, and the nine pairs that cannot touch in a ring are listed under the diagram.</p>
+  <h3>Focus areas</h3>
+  <div class="tags">${ORDER.map(k=>tagBtn(SHORT[k],`<span class="dots"><i style="background:${COL[k]}"></i></span>`,{t:'area',k})).join('')}</div>
+  <h3>Threads through all six</h3>
+  <p>Aboriginal and Torres Strait Islander Peoples’ economies (GDP contribution, access to capital and markets, advisory bodies, trade) · data analysis · mathematical skills (MPC, PED, loanable funds).</p>`;
+}
+function areaPanel(k){
+  const nb=LENS.filter(L=>L.a===k||L.b===k);
+  const lg=LONG.map((l,i)=>({l,i})).filter(o=>o.l[0]===k||o.l[1]===k);
+  return `<h2 style="color:${COL[k]}">${NAME[k]}</h2>
+  <p class="meta">${HRS[k]}</p>
+  <h3>Core concepts</h3>${list(EX[k])}
+  <h3>Overlaps with neighbours</h3>
+  <div class="tags">${nb.map(L=>{const o=L.a===k?L.b:L.a;return tagBtn(`${L.k}: ${SHORT[o]}`,dots(k,o),{t:'lens',k:L.k})}).join('')}</div>
+  <h3>Other links</h3>
+  <div class="tags">${lg.map(o=>{const other=o.l[0]===k?o.l[1]:o.l[0];return tagBtn(`${o.i+1}: ${SHORT[other]}`,dots(k,other),{t:'pair',i:o.i})}).join('')}</div>
+  <button class="reset" type="button">Clear selection</button>`;
+}
+function lensPanel(L){
+  return `<h2>${L.k}: ${SHORT[L.a]} ∩ ${SHORT[L.b]}</h2>
+  <p class="meta">${dots(L.a,L.b)} Shared by two neighbouring focus areas</p>
+  <h3>Shared concepts</h3><p>${esc(L.c)}</p>
+  <h3>Where the link can be made</h3><p>${esc(L.w)}</p>
+  <h3>Go to</h3>
+  <div class="tags">${[L.a,L.b].map(k=>tagBtn(SHORT[k],`<span class="dots"><i style="background:${COL[k]}"></i></span>`,{t:'area',k})).join('')}</div>
+  <button class="reset" type="button">Clear selection</button>`;
+}
+function pairPanel(i){
+  const l=LONG[i];
+  return `<h2>${i+1}: ${SHORT[l[0]]} ↔ ${SHORT[l[1]]}</h2>
+  <p class="meta">${dots(l[0],l[1])} ${esc(l[2])}</p>
+  <h3>Shared concepts</h3><p>${esc(l[3])}</p>
+  <h3>Go to</h3>
+  <div class="tags">${[l[0],l[1]].map(k=>tagBtn(SHORT[k],`<span class="dots"><i style="background:${COL[k]}"></i></span>`,{t:'area',k})).join('')}</div>
+  <button class="reset" type="button">Clear selection</button>`;
+}
+function hubPanel(){
+  return `<h2 style="color:var(--copper)">Circular flow: all six areas</h2>
+  <p class="meta">The centre of the diagram</p>
+  <h3>Shared concepts</h3><p>${esc(HUB.c)}</p>
+  <h3>Where the link can be made</h3><p>${esc(HUB.w)}</p>
+  <button class="reset" type="button">Clear selection</button>`;
+}
+
+let cur=null;
+function select(s){
+  cur=(cur&&JSON.stringify(cur)===JSON.stringify(s))?null:s;
+  paint();
+}
+function paint(){
+  const active=new Set();let lensK=null,pairI=null,hub=false;
+  if(cur){
+    if(cur.t==='area')active.add(cur.k);
+    if(cur.t==='lens'){const L=LENS.find(x=>x.k===cur.k);active.add(L.a);active.add(L.b);lensK=cur.k}
+    if(cur.t==='pair'){active.add(LONG[cur.i][0]);active.add(LONG[cur.i][1]);pairI=cur.i}
+    if(cur.t==='hub'){ORDER.forEach(k=>active.add(k));hub=true}
+  }
+  ORDER.forEach(k=>{areaG[k].classList.toggle('on',active.has(k)&&!hub);areaG[k].classList.toggle('dim',!!cur&&!active.has(k))});
+  LENS.forEach(L=>badgeG[L.k].classList.toggle('on',L.k===lensK));
+  hubG.classList.toggle('on',hub);
+  document.querySelectorAll('#ev-long .tag').forEach(b=>b.classList.toggle('on',pairI!==null&&+b.dataset.i===pairI));
+  if(pairI!==null){
+    const [a,b]=LONG[pairI];const [x1,y1]=P(ANG[a],D),[x2,y2]=P(ANG[b],D);
+    linkPath.setAttribute('d',`M${x1},${y1} Q${CX},${CY} ${x2},${y2}`);linkPath.classList.add('on');
+  }else linkPath.classList.remove('on');
+  panel.innerHTML=!cur?intro():cur.t==='area'?areaPanel(cur.k):cur.t==='lens'?lensPanel(LENS.find(x=>x.k===cur.k)):cur.t==='pair'?pairPanel(cur.i):hubPanel();
+  panel.querySelectorAll('[data-sel]').forEach(b=>b.addEventListener('click',()=>{cur=null;select(JSON.parse(b.dataset.sel))}));
+  const r=panel.querySelector('.reset');if(r)r.addEventListener('click',()=>{cur=null;paint()});
+}
+// keep the dashed link above circles but below badges/hub
+svg.insertBefore(linkPath,hubG);
+paint();
+})();
+</script>
+</body></html>
