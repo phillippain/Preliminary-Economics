@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Household budget ripple simulator</title>
+<style>
+:root{--ink:#1B2A33;--mut:#5C6B74;--bg:#fff;--card:#F3F6F8;--line:#D4DDE2;--navy:#1F3864;--teal:#17707E;--copper:#9A5418;--green:#3E7230;--plum:#6E4B8C;--rose:#B8405E;--blue:#2F6AA8;--gold:#FFF5D6;--up:#B8405E;--down:#17707E}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--ink:#E8EEF1;--mut:#A9B8C0;--bg:#121A1F;--card:#1B262D;--line:#34454F;--navy:#9FB7E6;--teal:#5CC2CF;--copper:#E8A863;--green:#8FCB7C;--plum:#B9A0DB;--rose:#F08AA2;--blue:#8DB8EA;--gold:#3A3320}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:#1F3864;color:#fff;padding:14px 16px}
+header h1{margin:0;font-size:1.25rem}header p{margin:2px 0 0;font-size:.85rem;opacity:.85}
+main{max-width:980px;margin:0 auto;padding:12px 16px 40px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px;padding:0;list-style:none}
+.steps li{flex:1 1 120px;padding:6px 8px;border-radius:8px;background:var(--card);font-size:.8rem;color:var(--mut);border-bottom:4px solid var(--line)}
+.steps li.on{color:var(--ink);font-weight:700;border-color:var(--copper)}.steps li.done{border-color:var(--teal)}
+h2{font-size:1.2rem;margin:.2em 0 .4em;color:var(--navy)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:9px 14px}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) button.primary{color:#121A1F}}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+.tile{text-align:left;display:block;width:100%;padding:12px;min-height:64px}
+.tile[aria-pressed=true]{border:2px solid var(--copper);background:var(--gold)}
+.tile .ic{font-size:1.4rem;margin-right:6px}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;border-radius:20px;padding:1px 8px;background:var(--line);color:var(--ink);margin-left:6px}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:.78rem;color:var(--mut);font-weight:700}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;min-width:110px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.bar b{font-size:1.15rem}.ok{color:var(--green)}.bad{color:var(--rose)}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--rose);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.note{font-size:.85rem;color:var(--mut)}
+.bars div.b{display:grid;grid-template-columns:minmax(120px,40%) 1fr 90px;gap:8px;align-items:center;margin:4px 0;font-size:.9rem}
+.bars .track{position:relative;height:16px;background:var(--card);border-radius:4px}
+.bars .fill{position:absolute;top:0;height:100%;border-radius:4px}
+.big{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.big .k{padding:10px;border-radius:12px;background:var(--card);border:1px solid var(--line)}.big .k b{display:block;font-size:1.5rem}
+svg{width:100%;height:auto;max-width:720px;display:block;margin:0 auto}
+svg text{fill:var(--ink);font-family:inherit}
+details{margin:8px 0}summary{cursor:pointer;font-weight:700;color:var(--navy)}
+label.small{font-size:.85rem;display:block;margin:6px 0 2px}
+input[type=number]{width:90px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.hidden{display:none}
+@media print{header,.steps,.row,button{display:none!important}}
+
+header{position:relative;overflow:hidden}header>*{position:relative;z-index:1}
+header svg.sky{position:absolute;right:0;bottom:0;height:100%;width:auto;z-index:0;opacity:.9}
+@media (max-width:560px){header svg.sky{display:none}}
+.tile .illo{display:block;width:100%;height:130px;border-radius:10px;margin:0 0 8px;background:#EAF2F5}
+.ic2{display:inline-block;width:1.5em;text-align:center}
+.step-illo{width:100%;height:auto;max-height:150px;border-radius:12px;margin:6px auto 4px}
+.hero{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header><svg class="sky" viewBox="0 0 360 80" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><g fill="#fff" opacity=".18"><rect x="10" y="40" width="30" height="40"/><rect x="46" y="22" width="26" height="58"/><rect x="78" y="48" width="34" height="32"/><path d="M120 80V52l22-16 22 16v28z"/><rect x="172" y="30" width="28" height="50"/><rect x="206" y="44" width="36" height="36"/><path d="M250 80V56l20-14 20 14v24z"/><rect x="300" y="26" width="24" height="54"/><rect x="330" y="50" width="26" height="30"/></g><g fill="#FFD27A" opacity=".55"><rect x="52" y="30" width="5" height="5"/><rect x="62" y="30" width="5" height="5"/><rect x="52" y="44" width="5" height="5"/><rect x="178" y="38" width="5" height="5"/><rect x="188" y="38" width="5" height="5"/><rect x="306" y="34" width="5" height="5"/></g><g fill="none" stroke="#fff" opacity=".35" stroke-width="1.5"><circle cx="190" cy="82" r="26"/><circle cx="190" cy="82" r="46"/><circle cx="190" cy="82" r="66"/></g></svg><h1>Household budget ripple simulator</h1><p>Year 11 Economics</p></header>
+<main>
+<ol class="steps" id="steps"></ol>
+<div id="app" aria-live="polite"></div>
+<p class="note">This is a simplified teaching model. The households, prices and assumptions are made up (illustrative), not real data.</p>
+</main>
+<script>
+// Household-to-economy ripple model (illustrative). Used inline by the simulator page AND by the Node doc builder,
+// so the numbers in the written task always match what students see in the simulator.
+(function (root) {
+  const CATS = [
+    // key, label, business who is paid, share of each extra/lost dollar that stays in the local economy, floor (fraction that can't be cut)
+    { k: "housing", label: "Housing", biz: "Banks and landlords", local: 0, floor: 1 },
+    { k: "groceries", label: "Groceries", biz: "Supermarkets and fresh food shops", local: 0.7, floor: 0.8 },
+    { k: "energy", label: "Electricity and gas", biz: "Energy retailers", local: 0.3, floor: 0.85 },
+    { k: "transport", label: "Petrol and transport", biz: "Petrol stations and transport", local: 0.25, floor: 0.8 },
+    { k: "phone", label: "Phone and internet", biz: "Phone and internet providers", local: 0.2, floor: 0.9 },
+    { k: "bills", label: "Insurance and bills", biz: "Insurers and utilities", local: 0.3, floor: 1 },
+    { k: "care", label: "Child care and school", biz: "Child care centres and schools", local: 0.85, floor: 1 },
+    { k: "eating", label: "Eating out and entertainment", biz: "Cafes, restaurants and venues", local: 0.9, floor: 0 },
+    { k: "other", label: "Clothes and other things", biz: "Local retail shops", local: 0.5, floor: 0 },
+    { k: "savings", label: "Savings", biz: "Banks (money to lend)", local: 0, floor: 0 },
+  ];
+  const PROFILES = {
+    carters: { name: "The Carters", blurb: "Two adults and two children with a home loan. Both adults work.", income: 2200, housingLabel: "Home loan repayments", housing: "loan",
+      base: { housing: 760, groceries: 380, energy: 90, transport: 170, phone: 45, bills: 70, care: 130, eating: 190, other: 100, savings: 265 } },
+    nguyens: { name: "The Nguyens", blurb: "One adult and a teenager, renting. One income.", income: 1600, housingLabel: "Rent", housing: "rent",
+      base: { housing: 620, groceries: 260, energy: 70, transport: 120, phone: 40, bills: 50, care: 80, eating: 130, other: 80, savings: 150 } },
+  };
+  const SHOCKS = [
+    { id: "petrol", label: "Petrol prices rise 20%", icon: "⛽", up: true, apply: (s) => { s.items.transport *= 1.2; } },
+    { id: "energy", label: "Electricity and gas bills rise 25%", icon: "💡", up: true, apply: (s) => { s.items.energy *= 1.25; } },
+    { id: "food", label: "Grocery prices rise 10%", icon: "🛒", up: true, apply: (s) => { s.items.groceries *= 1.1; } },
+    { id: "housing", label: null, icon: "🏠", up: true, apply: (s, p) => { s.items.housing += p.housing === "loan" ? 65 : 60; } },
+    { id: "hours", label: "A parent's work hours are cut (income falls 15%)", icon: "⏱️", up: true, apply: (s) => { s.income *= 0.85; } },
+    { id: "wage", label: "Pay rise: income up 4%", icon: "💵", up: false, apply: (s) => { s.income *= 1.04; } },
+    { id: "care", label: "Child care subsidy: child care costs fall 30%", icon: "🧒", up: false, apply: (s) => { s.items.care *= 0.7; } },
+  ];
+  const shockLabel = (sh, p) => sh.label || (p.housing === "loan" ? "Interest rates rise: the home loan costs $65 more a week" : "Rent increase: rent rises $60 a week");
+  const DEFAULTS = { households: 1000, wageShare: 0.35, weeklyPay: 1400, spendRate: 0.8 };
+
+  const round = (x) => Math.round(x);
+  function situation(profileKey, shockIds) {
+    const p = PROFILES[profileKey];
+    const s = { income: p.income, items: { ...p.base } };
+    shockIds.forEach((id) => SHOCKS.find((x) => x.id === id).apply(s, p));
+    Object.keys(s.items).forEach((k) => (s.items[k] = round(s.items[k])));
+    s.income = round(s.income);
+    return s;
+  }
+  // choice: {k: dollars} final weekly amounts; borrow: dollars
+  function ripple(profileKey, shockIds, choice, borrow, opt) {
+    const o = { ...DEFAULTS, ...(opt || {}) };
+    const loc = Object.fromEntries(CATS.map((c) => [c.k, (o.local && o.local[c.k] != null) ? o.local[c.k] : c.local]));
+    const p = PROFILES[profileKey];
+    const N = o.households;
+    const bySector = []; let localSales = 0, leak = 0, loanPay = 0;
+    CATS.forEach((c) => {
+      if (c.k === "savings") return;
+      const d = (choice[c.k] - p.base[c.k]) * N; // change in weekly spending, whole suburb
+      if (c.k === "housing" && p.housing === "loan") { loanPay += d; return; }
+      const l = d * loc[c.k];
+      localSales += l; leak += d - l;
+      bySector.push({ k: c.k, biz: c.biz, delta: round(l), total: round(d) });
+    });
+    const dSave = (choice.savings - p.base.savings) * N;
+    const first = localSales; // round-1 change in local sales
+    const f = o.wageShare * o.spendRate * (CATS.filter((c) => c.k !== "housing" && c.k !== "savings").reduce((a, c) => a + loc[c.k] * p.base[c.k], 0) / CATS.filter((c) => c.k !== "housing" && c.k !== "savings").reduce((a, c) => a + p.base[c.k], 0));
+    const rounds = [first]; for (let r = 1; r < 4; r++) rounds.push(rounds[r - 1] * f);
+    const total = rounds.reduce((a, b) => a + b, 0);
+    const wages = total * o.wageShare;
+    return { N, bySector, localSales: round(first), leak: round(leak), loanPay: round(loanPay), dSave: round(dSave), f, rounds: rounds.map(round), total: round(total), wages: round(wages), jobs: Math.round((wages / o.weeklyPay) * 10) / 10, borrow };
+  }
+  const api = { CATS, PROFILES, SHOCKS, DEFAULTS, shockLabel, situation, ripple };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.RippleModel = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+(function(){
+const M=window.RippleModel, $=(s)=>document.querySelector(s);
+const fmt=(n)=>(n<0?"−":"")+"$"+Math.abs(Math.round(n)).toLocaleString("en-AU");
+const sgn=(n)=>(n>0?"+":n<0?"−":"")+"$"+Math.abs(Math.round(n)).toLocaleString("en-AU");
+const cls=(n)=>n>0?"pos":n<0?"neg":"";
+const S={step:1,profile:null,shocks:[],choice:null,borrow:0,opt:{...M.DEFAULTS,local:{}},situ:null};
+const STEPS=["1 Choose a household","2 Pick a shock","3 Balance the budget","4 See the ripple","5 Your results"];
+const catLabel=(k,p)=>k==="housing"?M.PROFILES[p].housingLabel:M.CATS.find(c=>c.k===k).label;
+
+function renderSteps(){$("#steps").innerHTML=STEPS.map((t,i)=>`<li class="${i+1===S.step?"on":i+1<S.step?"done":""}">${t}</li>`).join("")}
+function go(n){S.step=n;render();window.scrollTo({top:0,behavior:"smooth"})}
+
+
+const ICON={housing:"🏠",groceries:"🛒",energy:"💡",transport:"⛽",phone:"📱",bills:"🧾",care:"🧒",eating:"🍽️",other:"👕",savings:"🏦"};
+const person=(x,y,s,c)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="0" cy="-16" r="6" fill="#F2C9A5"/><rect x="-7" y="-9" width="14" height="22" rx="6" fill="${c}"/></g>`;
+function illoProfile(k){
+if(k==="carters")return `<svg class="illo" viewBox="0 0 360 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a family home with a car, a tree and four people"><rect x="-300" width="960" height="120" fill="#CFE6F2"/><rect x="-300" y="92" width="960" height="28" fill="#9CCB86"/><rect x="-300" y="100" width="960" height="20" fill="#7FB36C"/><g transform="translate(60 0)"><circle cx="205" cy="24" r="12" fill="#FFD27A"/><path d="M0 92Q60 80 120 90T240 88V120H0z" fill="#9CCB86"/><rect x="0" y="100" width="240" height="20" fill="#7FB36C"/><rect x="62" y="52" width="86" height="48" fill="#F4E3C3"/><path d="M54 54L105 22l51 32z" fill="#B8405E"/><rect x="95" y="72" width="20" height="28" rx="2" fill="#6E4B8C"/><rect x="70" y="62" width="16" height="14" fill="#8FC1E3"/><rect x="124" y="62" width="16" height="14" fill="#8FC1E3"/><rect x="132" y="28" width="9" height="18" fill="#9A5418"/><rect x="170" y="78" width="9" height="22" fill="#7A4A22"/><circle cx="174" cy="68" r="17" fill="#3E7230"/><circle cx="162" cy="76" r="11" fill="#4E8A3E"/><rect x="8" y="84" width="46" height="14" rx="6" fill="#2F6AA8"/><rect x="16" y="76" width="28" height="12" rx="5" fill="#2F6AA8"/><circle cx="20" cy="100" r="6" fill="#1B2A33"/><circle cx="42" cy="100" r="6" fill="#1B2A33"/>${person(190,104,.8,"#B8405E")}${person(206,104,.8,"#17707E")}${person(220,108,.6,"#E8A863")}${person(231,108,.55,"#6E4B8C")}</g></svg>`;
+return `<svg class="illo" viewBox="0 0 360 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of an apartment building with a for rent sign and two people"><rect x="-300" width="960" height="120" fill="#E4DDF2"/><rect x="-300" y="100" width="960" height="20" fill="#9AA7B0"/><g transform="translate(60 0)"><circle cx="36" cy="26" r="12" fill="#FFD27A"/><rect x="0" y="100" width="240" height="20" fill="#9AA7B0"/><rect x="72" y="14" width="96" height="86" fill="#C9A98A"/><rect x="72" y="14" width="96" height="10" fill="#9A5418"/>${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${82+c*28}" y="${32+r*22}" width="16" height="14" fill="${(r+c)%2?"#FFE9A8":"#8FC1E3"}"/>`).join("")).join("")}<rect x="108" y="78" width="24" height="22" fill="#6E4B8C"/><rect x="176" y="62" width="4" height="38" fill="#5C6B74"/><rect x="170" y="56" width="40" height="18" rx="3" fill="#fff" stroke="#B8405E" stroke-width="2"/><text x="190" y="69" font-size="8" font-weight="700" text-anchor="middle" fill="#B8405E" style="fill:#B8405E">FOR RENT</text>${person(40,104,.85,"#17707E")}${person(58,106,.7,"#E8A863")}</g></svg>`}
+function illoRipple(r){const c=r.total<0?"#B8405E":r.total>0?"#3E7230":"#8A97A0";
+const shop=(x,y,col,lab)=>`<g transform="translate(${x} ${y})"><rect x="-17" y="-8" width="34" height="24" fill="#fff" stroke="${col}" stroke-width="2"/><path d="M-20 -8h40l-4 -10h-32z" fill="${col}"/><rect x="-5" y="2" width="10" height="14" fill="${col}" opacity=".5"/><text x="0" y="32" font-size="11" text-anchor="middle">${lab}</text></g>`;
+return `<svg class="step-illo" viewBox="0 0 720 150" role="img" aria-label="Illustration: a household's spending change spreads outward like ripples to shops, workers and then other households" style="background:#EEF4F7"><g fill="none" stroke="${c}" stroke-width="3">${[40,100,170,250,340].map((rr,i)=>`<circle cx="70" cy="75" r="${rr}" opacity="${.75-i*.13}"/>`).join("")}</g><g transform="translate(70 75)"><rect x="-22" y="-8" width="44" height="30" fill="#F4E3C3"/><path d="M-28 -8L0 -32l28 24z" fill="#B8405E"/><rect x="-5" y="4" width="10" height="18" fill="#6E4B8C"/></g><text x="70" y="128" font-size="12" text-anchor="middle" font-weight="700">Households</text>${shop(260,66,"#9A5418","Local shops")}${person(400,92,1.1,"#2F6AA8")}<text x="400" y="128" font-size="11" text-anchor="middle">Workers</text>${shop(540,66,"#17707E","Other businesses")}${person(660,92,1.1,"#E8A863")}<text x="660" y="128" font-size="11" text-anchor="middle">More spending</text><text x="360" y="22" font-size="13" text-anchor="middle" font-weight="700" style="fill:${c}">${r.total<0?"The ripple shrinks spending":r.total>0?"The ripple grows spending":"No ripple"}</text></svg>`}
+function s1(){return `<h2>Choose a household</h2><p>Every week, a household decides how to share out its income between things it wants. Which household will you follow?</p>
+<div class="grid">${Object.entries(M.PROFILES).map(([k,p])=>`<button class="tile card" data-p="${k}">${illoProfile(k)}<b>${p.name}</b><br>${p.blurb}<br><span class="note">Weekly income after tax: ${fmt(p.income)}</span></button>`).join("")}</div>
+<div class="row"><button id="cls">Use the class scenario (Carters, petrol and energy prices rise)</button></div>`}
+function s2(){const p=M.PROFILES[S.profile];return `<h2>Pick a shock for ${p.name}</h2><p>Choose one or two things that change. (Three at most.)</p>
+<div class="grid">${M.SHOCKS.map(sh=>`<button class="tile card" aria-pressed="${S.shocks.includes(sh.id)}" data-s="${sh.id}"><span class="ic">${sh.icon}</span>${M.shockLabel(sh,p)}<span class="tag">${sh.up?"cost up":"good news"}</span></button>`).join("")}</div>
+<div class="row"><button data-back="1">Back</button><button class="primary" id="n2" ${S.shocks.length?"":"disabled"}>Next: balance the budget</button></div>`}
+
+function totals(){const items=Object.values(S.choice).reduce((a,b)=>a+b,0);return{out:items,funds:S.situ.income+S.borrow}}
+function s3(){const p=M.PROFILES[S.profile],sit=S.situ,t=totals(),left=t.funds-t.out;
+return `<h2>Balance the budget</h2><p>The shocks have changed prices or income. ${p.name} must make the weekly budget add up. Use the sliders to decide where the money goes. Essentials can only be trimmed a little, and you can add to eating out, other things or savings if there is money left over.</p>
+<div class="bar"><span>Income: <b>${fmt(sit.income)}</b></span><span>Borrowing: <b>${fmt(S.borrow)}</b></span><span>Planned spending and saving: <b>${fmt(t.out)}</b></span><span id="left">${left>=0?`<b class="ok">Left over: ${fmt(left)}</b>`:`<b class="bad">Still to cover: ${fmt(-left)}</b>`}</span></div>
+<table><thead><tr><th>Category</th><th class="n">Before</th><th class="n">After the shock</th><th>Your choice</th><th class="n">This week</th></tr></thead><tbody>
+${M.CATS.map(c=>{const base=p.base[c.k],now=sit.items[c.k],min=Math.round(now*c.floor),max=["eating","other","savings"].includes(c.k)?now+250:now;return `<tr><td><span class="ic2">${ICON[c.k]}</span>${catLabel(c.k,S.profile)}</td><td class="n">${fmt(base)}</td><td class="n ${cls(-(now-base))}">${fmt(now)}</td><td><input type="range" data-c="${c.k}" min="${min}" max="${max}" value="${S.choice[c.k]}" step="1" aria-label="${catLabel(c.k,S.profile)} weekly amount"></td><td class="n" id="v-${c.k}"><b>${fmt(S.choice[c.k])}</b></td></tr>`}).join("")}
+<tr><td><span class="ic2">💳</span>Borrow (credit card or loan)</td><td class="n">$0</td><td class="n">—</td><td><input type="range" data-borrow min="0" max="400" step="10" value="${S.borrow}" aria-label="Borrowing this week"></td><td class="n" id="v-borrow"><b>${fmt(S.borrow)}</b></td></tr></tbody></table>
+<p class="note">Borrowing solves this week's problem but creates repayments later. Which choice would you actually make?</p>
+<div class="row"><button data-back="2">Back</button><button class="primary" id="n3" ${left>=0?"":"disabled"}>Next: see the ripple</button></div>`}
+
+function bars(list){const mx=Math.max(1,...list.map(x=>Math.abs(x.delta)));return `<div class="bars">${list.map(x=>{const w=Math.abs(x.delta)/mx*48;const left=x.delta<0?50-w:50;return `<div class="b"><span><span class="ic2">${ICON[x.k]}</span>${x.biz}</span><span class="track"><span class="fill" style="left:${left}%;width:${w}%;background:var(${x.delta<0?"--rose":"--green"})"></span></span><span class="n ${cls(x.delta)}">${sgn(x.delta)}</span></div>`}).join("")}</div>`}
+function flow(r){const w=(v)=>Math.max(2,Math.min(9,Math.sqrt(Math.abs(v))/14));const col=(v)=>Math.abs(v)<500?"#8A97A0":v<0?"#B8405E":"#3E7230";
+const A=(id,d,v,tx,ty,lab,inv)=>`<path d="${d}" fill="none" stroke="${col(inv?-v:v)}" stroke-width="${w(v)}" marker-end="url(#ah)" opacity=".9"/><text x="${tx}" y="${ty}" font-size="12" text-anchor="middle" font-weight="700">${lab}</text><text x="${tx}" y="${ty+14}" font-size="12" text-anchor="middle">${sgn(v)} a week</text>`;
+const spend=r.localSales,wages=r.wages,save=r.dSave+r.loanPay,lend=r.dSave;
+return `<svg viewBox="0 0 720 400" role="img" aria-label="Circular flow diagram showing how the change in household spending changes local business sales, wages, savings and lending">
+<defs><marker id="ah" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M0,0 L14,7 L0,14 z" fill="#5C6B74"/></marker></defs>
+<rect x="20" y="150" width="170" height="90" rx="14" fill="#2F6AA8" opacity=".15" stroke="#2F6AA8"/><text x="105" y="190" font-size="17" text-anchor="middle" font-weight="700">Households</text><text x="105" y="212" font-size="12" text-anchor="middle">the Carters × ${S.opt.households.toLocaleString("en-AU")}</text>
+<rect x="530" y="150" width="170" height="90" rx="14" fill="#9A5418" opacity=".15" stroke="#9A5418"/><text x="615" y="190" font-size="17" text-anchor="middle" font-weight="700">Local businesses</text><text x="615" y="212" font-size="12" text-anchor="middle">shops, cafes, services</text>
+<rect x="275" y="320" width="170" height="64" rx="14" fill="#6E4B8C" opacity=".15" stroke="#6E4B8C"/><text x="360" y="350" font-size="16" text-anchor="middle" font-weight="700">Financial sector</text><text x="360" y="368" font-size="12" text-anchor="middle">banks, savings, loans</text>
+<rect x="275" y="14" width="170" height="64" rx="14" fill="#8A97A0" opacity=".18" stroke="#8A97A0"/><text x="360" y="42" font-size="15" text-anchor="middle" font-weight="700">Money that leaves</text><text x="360" y="60" font-size="12" text-anchor="middle">imports, profits sent away</text>
+${A("s","M192,175 C300,150 420,150 528,175",spend,360,122,"Spending in local businesses")}
+${A("w","M528,218 C420,250 300,250 192,218",wages,360,268,"Wages and income")}
+${A("v","M105,242 C105,300 170,350 273,352",save,95,332,"Saving and loan payments")}
+${A("l","M447,352 C560,350 615,300 615,242",lend,640,332,"Loans for investment")}
+${A("o","M120,148 C130,80 200,50 273,46",r.leak,110,100,"Spending that leaves the area",true)}
+</svg>`}
+function s4(){const p=M.PROFILES[S.profile],r=S.res=M.ripple(S.profile,S.shocks,S.choice,S.borrow,S.opt);
+const word=r.total<0?"fall":"rise";
+return `<h2>See the ripple</h2><p>Now imagine <b>${r.N.toLocaleString("en-AU")} households like ${p.name}</b> in one suburb all make the same choices. Businesses sell to these households, so what happens when their spending shifts?</p>
+${illoRipple(r)}
+<div class="big"><div class="k">Local business sales<b class="${cls(r.localSales)}">${sgn(r.localSales)}</b>a week, first round</div><div class="k">After the knock-on rounds<b class="${cls(r.total)}">${sgn(r.total)}</b>a week in total</div><div class="k">Wages paid<b class="${cls(r.wages)}">${sgn(r.wages)}</b>a week</div><div class="k">Jobs<b class="${cls(r.jobs)}">${r.jobs>0?"+":r.jobs<0?"−":""}${Math.abs(r.jobs)}</b>full-time jobs' worth of pay</div></div>
+<div class="card"><b>Where did the spending change?</b> Change in local sales by business type:${bars(r.bySector.filter(x=>x.delta!==0||x.total!==0))}
+<p class="note">Spending can change without leaving the household's total spending any different, if it moves from local businesses to places where less money stays in the area.</p></div>
+<div class="card"><b>What economists call this</b><p>The change in spending across the suburb is a <b>${r.total<0?"contractionary":r.total>0?"expansionary":"neutral"}</b> effect: ${r.total<0?"total spending, sales, wages and jobs are shrinking, so economic activity is slowing":r.total>0?"total spending, sales, wages and jobs are growing, so economic activity is speeding up":"total spending is not changing"}.</p><p class="note">Year 12 extension: governments and the Reserve Bank can use policy to push the other way. An <b>expansionary stance</b> (for example lower interest rates, tax cuts or more government spending) aims to lift spending and jobs. A <b>contractionary stance</b> (higher interest rates, higher taxes or less government spending) aims to cool spending when prices are rising too fast. Which stance would suit the economy in your scenario? Why might it not fix the problem for this household?</p></div>
+<div class="card"><b>The circular flow</b>${flow(r)}</div>
+<div class="card"><b>The knock-on rounds</b><p>If businesses sell ${r.total<0?"less":"more"}, they pay ${r.total<0?"less":"more"} in wages. Their workers then spend ${r.total<0?"less":"more"} too, and so the effect passes on again, getting smaller each time:</p>
+<table><thead><tr><th>Round</th><th class="n">Change in local sales a week</th></tr></thead><tbody>${r.rounds.map((v,i)=>`<tr><td>${i===0?"1 (households change their spending)":i+1+" (workers and owners respond)"}</td><td class="n ${cls(v)}">${sgn(v)}</td></tr>`).join("")}<tr><td><b>Total after 4 rounds</b></td><td class="n ${cls(r.total)}"><b>${sgn(r.total)}</b></td></tr></tbody></table></div>
+<details class="card"><summary>Assumptions in this model (change them and watch the results)</summary>
+<p class="note">Every model rests on assumptions. These are made-up, so you can test what happens when they change.</p>
+<label class="small">Number of similar households in the suburb <input type="number" id="a-n" min="100" max="50000" step="100" value="${S.opt.households}"></label>
+<label class="small">Share of each business's sales paid out as wages (%) <input type="number" id="a-w" min="5" max="90" value="${Math.round(S.opt.wageShare*100)}"></label>
+<label class="small">Typical weekly pay in these businesses ($) <input type="number" id="a-p" min="500" max="4000" step="50" value="${S.opt.weeklyPay}"></label>
+<label class="small">Share of lost pay that workers cut from their own spending (%) <input type="number" id="a-s" min="10" max="100" value="${Math.round(S.opt.spendRate*100)}"></label>
+<p class="note">Share of each dollar that stays in the local area, by category (%):</p>
+${M.CATS.filter(c=>c.k!=="housing"&&c.k!=="savings").map(c=>`<label class="small" style="display:inline-block;margin-right:12px">${c.label} <input type="number" data-loc="${c.k}" min="0" max="100" value="${Math.round((S.opt.local[c.k]!=null?S.opt.local[c.k]:c.local)*100)}"></label>`).join("")}
+<div class="row"><button id="apply">Recalculate</button></div></details>
+<div class="row"><button data-back="3">Back</button><button class="primary" id="n4">Next: your results</button></div>`}
+
+function summary(){const p=M.PROFILES[S.profile],r=S.res,sit=S.situ;
+const shocks=S.shocks.map(id=>M.shockLabel(M.SHOCKS.find(x=>x.id===id),p));
+const cuts=M.CATS.filter(c=>S.choice[c.k]-sit.items[c.k]<0).map(c=>`${catLabel(c.k,S.profile).toLowerCase()} ${sgn(S.choice[c.k]-sit.items[c.k])}`);
+const hold=M.CATS.filter(c=>sit.items[c.k]-p.base[c.k]>0).map(c=>`${catLabel(c.k,S.profile).toLowerCase()} ${sgn(sit.items[c.k]-p.base[c.k])}`);
+return [`MY RIPPLE RESULTS`,`Household: ${p.name} (income ${fmt(sit.income)} a week)`,`What changed: ${shocks.join("; ")}`,
+`Extra costs or lost income to cover: ${fmt(Math.max(0,Object.values(sit.items).reduce((a,b)=>a+b,0)-sit.income))} a week${hold.length?` (${hold.join(", ")})`:""}`,
+`What the household gave up (opportunity cost): ${cuts.length?cuts.join("; "):"nothing - it borrowed instead"}${S.borrow?`; borrowed ${fmt(S.borrow)} a week`:""}`,
+`With ${r.N.toLocaleString("en-AU")} similar households: local sales ${sgn(r.localSales)} a week first round, ${sgn(r.total)} after the knock-on rounds`,
+`Wages ${sgn(r.wages)} a week (about ${Math.abs(r.jobs)} full-time jobs ${r.jobs<0?"lost":"gained"}); savings ${sgn(r.dSave)} a week`,`Effect on the economy: ${r.total<0?"contractionary (spending, wages and jobs shrinking)":r.total>0?"expansionary (spending, wages and jobs growing)":"neutral"}`].join("\n")}
+function s5(){const t=summary();return `<h2>Your results</h2><p>Copy these results into your Ripple log. You will use evidence like this in the written task.</p><pre id="sum">${t.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>
+<div class="row"><button class="primary" id="copy">Copy my results</button><button id="again">Try another shock</button><button id="reset">Start again</button><button onclick="window.print()">Print</button></div><p id="cm" class="note"></p>
+<div class="card"><b>Think about it</b><ol><li>What did the household give up? Use the words <i>scarcity</i> and <i>opportunity cost</i>.</li><li>Trace the ripple: household &rarr; businesses &rarr; workers. What links each step?</li><li>Which assumption in the model would you challenge? How would the result change?</li><li>Is the effect on the economy expansionary or contractionary? What policy stance could the government or the Reserve Bank take in response?</li></ol></div>`}
+
+function render(){renderSteps();$("#app").innerHTML=[s1,s2,s3,s4,s5][S.step-1]();bind()}
+function start(prof,shocks){S.profile=prof;S.shocks=shocks;prep()}
+function prep(){S.situ=M.situation(S.profile,S.shocks);S.choice={...S.situ.items};S.borrow=0}
+function bind(){
+ document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>go(+b.dataset.back));
+ if(S.step===1){document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{S.profile=b.dataset.p;S.shocks=[];go(2)});$("#cls").onclick=()=>{start("carters",["petrol","energy"]);go(3)}}
+ if(S.step===2){document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{const id=b.dataset.s,i=S.shocks.indexOf(id);if(i>=0)S.shocks.splice(i,1);else if(S.shocks.length<3)S.shocks.push(id);render()});const n=$("#n2");if(n)n.onclick=()=>{prep();go(3)}}
+ if(S.step===3){document.querySelectorAll("input[data-c]").forEach(r=>r.oninput=()=>{S.choice[r.dataset.c]=+r.value;$("#v-"+r.dataset.c).innerHTML="<b>"+fmt(+r.value)+"</b>";upd()});const bo=document.querySelector("input[data-borrow]");bo.oninput=()=>{S.borrow=+bo.value;$("#v-borrow").innerHTML="<b>"+fmt(S.borrow)+"</b>";upd()};$("#n3").onclick=()=>go(4)}
+ if(S.step===4){$("#apply").onclick=()=>{S.opt.households=+$("#a-n").value||1000;S.opt.wageShare=(+$("#a-w").value||35)/100;S.opt.weeklyPay=+$("#a-p").value||1400;S.opt.spendRate=(+$("#a-s").value||80)/100;document.querySelectorAll("[data-loc]").forEach(i=>S.opt.local[i.dataset.loc]=(+i.value)/100);render()};$("#n4").onclick=()=>go(5)}
+ if(S.step===5){$("#copy").onclick=()=>{const t=$("#sum").textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>$("#cm").textContent="Copied.").catch(()=>{const r=document.createRange();r.selectNodeContents($("#sum"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("#cm").textContent="Press Ctrl+C (or Cmd+C) to copy the selected text."})};$("#again").onclick=()=>{S.shocks=[];go(2)};$("#reset").onclick=()=>{S.profile=null;S.shocks=[];go(1)}}
+}
+function upd(){const t=totals(),left=t.funds-t.out;$("#left").innerHTML=left>=0?`<b class="ok">Left over: ${fmt(left)}</b>`:`<b class="bad">Still to cover: ${fmt(-left)}</b>`;document.querySelector(".bar").children[1].innerHTML=`Borrowing: <b>${fmt(S.borrow)}</b>`;document.querySelector(".bar").children[2].innerHTML=`Planned spending and saving: <b>${fmt(t.out)}</b>`;$("#n3").disabled=left<0}
+// preset via URL hash, e.g. #profile=carters&shocks=petrol,energy
+const h=new URLSearchParams(location.hash.slice(1));if(h.get("profile")&&M.PROFILES[h.get("profile")]){start(h.get("profile"),(h.get("shocks")||"").split(",").filter(x=>M.SHOCKS.some(s=>s.id===x)).slice(0,3));S.step=S.shocks.length?3:2}
+render();
+})();
+</script>
+</body>
+</html>
